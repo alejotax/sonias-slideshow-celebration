@@ -48,9 +48,11 @@ All colors MUST be HSL.
     --gradient-golden: linear-gradient(135deg, hsl(45 95% 70%), hsl(35 85% 75%));
     --gradient-sunset: linear-gradient(180deg, hsl(25 85% 90%), hsl(15 75% 95%));
 
-    /* Shadows */
-    --shadow-celebration: 0 10px 30px -10px hsl(15 75% 65% / 0.3);
-    --shadow-golden: 0 8px 25px -8px hsl(45 95% 70% / 0.4);
+    /* Enhanced shadows */
+    --shadow-celebration: 0 15px 40px -10px hsl(15 75% 65% / 0.4);
+    --shadow-golden: 0 12px 35px -8px hsl(45 95% 70% / 0.5);
+    --shadow-card: 0 20px 50px -15px hsl(15 75% 65% / 0.25);
+    --shadow-floating: 0 5px 15px -5px hsl(345 85% 75% / 0.3);
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
@@ -178,5 +180,27 @@ All colors MUST be HSL.
 
   .golden-shadow {
     box-shadow: var(--shadow-golden);
+  }
+
+  .card-shadow {
+    box-shadow: var(--shadow-card);
+  }
+
+  .floating-shadow {
+    box-shadow: var(--shadow-floating);
+  }
+
+  /* Enhanced animations */
+  @keyframes gentle-glow {
+    0%, 100% { 
+      box-shadow: var(--shadow-celebration);
+    }
+    50% { 
+      box-shadow: var(--shadow-golden);
+    }
+  }
+
+  .animate-gentle-glow {
+    animation: gentle-glow 3s ease-in-out infinite;
   }
 }

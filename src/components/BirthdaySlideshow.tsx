@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { ChevronLeft, ChevronRight, Play, Pause, Heart, Sparkles } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Play, Pause, Heart, Sparkles, RotateCw, ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
 
 interface Media {
   id: number;
@@ -15,30 +15,45 @@ const BirthdaySlideshow = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [showWelcome, setShowWelcome] = useState(true);
   const [imageLoadError, setImageLoadError] = useState<Set<number>>(new Set());
+  const [imageRotation, setImageRotation] = useState(0);
+  const [imageZoom, setImageZoom] = useState(1);
+  const [showImageControls, setShowImageControls] = useState(false);
 
-  // Generate media array: 50 photos + 1 video
-  const media: Media[] = [
-    ...Array.from({ length: 50 }, (_, i) => ({
-      id: i + 1,
-      src: `foto${i + 1}.jpg`,
-      type: 'image' as const,
-      caption: `Recuerdo especial ${i + 1}`
-    })),
-    {
-      id: 51,
-      src: 'video.mp4',
-      type: 'video' as const,
-      caption: 'Video especial del cumpleaños'
-    }
-  ];
+  // Generate media array: 64 photos
+  const media: Media[] = Array.from({ length: 64 }, (_, i) => ({
+    id: i + 1,
+    src: `foto${i + 1}.jpg`,
+    type: 'image' as const,
+    caption: `Recuerdo especial ${i + 1}`
+  }));
 
   const nextSlide = useCallback(() => {
     setCurrentSlide((prev) => (prev + 1) % media.length);
+    setImageRotation(0);
+    setImageZoom(1);
   }, [media.length]);
 
   const prevSlide = useCallback(() => {
     setCurrentSlide((prev) => (prev - 1 + media.length) % media.length);
+    setImageRotation(0);
+    setImageZoom(1);
   }, [media.length]);
+
+  const rotateImage = (direction: 'left' | 'right') => {
+    setImageRotation(prev => direction === 'right' ? prev + 90 : prev - 90);
+  };
+
+  const zoomImage = (direction: 'in' | 'out') => {
+    setImageZoom(prev => {
+      const newZoom = direction === 'in' ? prev * 1.2 : prev / 1.2;
+      return Math.max(0.5, Math.min(3, newZoom));
+    });
+  };
+
+  const resetImageTransform = () => {
+    setImageRotation(0);
+    setImageZoom(1);
+  };
 
   const handleImageError = (id: number) => {
     setImageLoadError(prev => new Set(prev).add(id));
@@ -193,43 +208,89 @@ const BirthdaySlideshow = () => {
             <ChevronRight className="w-6 h-6" />
           </Button>
 
+          {/* Image controls - positioned above the card */}
+          <div className="absolute top-4 right-4 z-20 flex gap-2">
+            <div className="flex items-center gap-1 bg-black/40 backdrop-blur-sm rounded-lg p-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => rotateImage('left')}
+                className="text-white hover:bg-white/20 p-2 h-auto"
+                title="Rotar izquierda"
+              >
+                <RotateCcw className="w-4 h-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => rotateImage('right')}
+                className="text-white hover:bg-white/20 p-2 h-auto"
+                title="Rotar derecha"
+              >
+                <RotateCw className="w-4 h-4" />
+              </Button>
+              <div className="w-px h-6 bg-white/30 mx-1" />
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => zoomImage('out')}
+                className="text-white hover:bg-white/20 p-2 h-auto"
+                title="Alejar"
+              >
+                <ZoomOut className="w-4 h-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => zoomImage('in')}
+                className="text-white hover:bg-white/20 p-2 h-auto"
+                title="Acercar"
+              >
+                <ZoomIn className="w-4 h-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={resetImageTransform}
+                className="text-white hover:bg-white/20 p-2 h-auto text-xs"
+                title="Resetear"
+              >
+                Reset
+              </Button>
+            </div>
+          </div>
+
           {/* Media container */}
-          <Card className="relative overflow-hidden birthday-shadow">
-            <div className="aspect-[16/10] bg-gradient-to-br from-muted to-secondary/30 flex items-center justify-center">
-              {currentMedia.type === 'image' ? (
-                imageLoadError.has(currentMedia.id) ? (
-                  <div className="text-center p-8">
-                    <div className="w-24 h-24 mx-auto mb-4 bg-primary/20 rounded-full flex items-center justify-center">
-                      <Heart className="w-12 h-12 text-primary" />
-                    </div>
-                    <h3 className="text-xl font-semibold text-foreground mb-2">
-                      {currentMedia.caption}
-                    </h3>
-                    <p className="text-muted-foreground">
-                      Imagen: {currentMedia.src}
-                    </p>
-                    <p className="text-sm text-muted-foreground mt-2">
-                      (Coloca la imagen en la carpeta public del proyecto)
-                    </p>
+          <Card className="relative overflow-hidden card-shadow animate-gentle-glow group">
+            <div className="aspect-[16/10] bg-gradient-to-br from-muted to-secondary/30 flex items-center justify-center overflow-hidden">
+              {imageLoadError.has(currentMedia.id) ? (
+                <div className="text-center p-8">
+                  <div className="w-24 h-24 mx-auto mb-4 bg-primary/20 rounded-full flex items-center justify-center">
+                    <Heart className="w-12 h-12 text-primary" />
                   </div>
-                ) : (
+                  <h3 className="text-xl font-semibold text-foreground mb-2">
+                    {currentMedia.caption}
+                  </h3>
+                  <p className="text-muted-foreground">
+                    Imagen: {currentMedia.src}
+                  </p>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    (Coloca la imagen en la carpeta public del proyecto)
+                  </p>
+                </div>
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
                   <img
                     src={currentMedia.src}
                     alt={currentMedia.caption}
-                    className="w-full h-full object-cover"
+                    className="max-w-full max-h-full object-contain transition-all duration-300 ease-out cursor-pointer"
+                    style={{
+                      transform: `rotate(${imageRotation}deg) scale(${imageZoom})`,
+                      transformOrigin: 'center'
+                    }}
                     onError={() => handleImageError(currentMedia.id)}
+                    onClick={() => setShowImageControls(!showImageControls)}
                   />
-                )
-              ) : (
-                <div className="w-full h-full flex items-center justify-center">
-                  <video
-                    src={currentMedia.src}
-                    controls
-                    className="max-w-full max-h-full"
-                    onError={() => handleImageError(currentMedia.id)}
-                  >
-                    Tu navegador no soporta el elemento de video.
-                  </video>
                 </div>
               )}
             </div>
