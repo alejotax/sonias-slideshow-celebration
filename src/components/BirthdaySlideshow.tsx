@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { ChevronLeft, ChevronRight, Play, Pause, Heart, Sparkles, RotateCw, ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Play, Pause, Heart, Sparkles, RotateCw, ZoomIn, ZoomOut, RotateCcw, X } from 'lucide-react';
 
 interface Media {
   id: number;
@@ -18,6 +18,7 @@ const BirthdaySlideshow = () => {
   const [imageRotation, setImageRotation] = useState(0);
   const [imageZoom, setImageZoom] = useState(1);
   const [showImageControls, setShowImageControls] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false); // Nuevo estado
 
   // Generate media array: 64 photos
   const media: Media[] = Array.from({ length: 64 }, (_, i) => ({
@@ -71,7 +72,12 @@ const BirthdaySlideshow = () => {
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (showWelcome) return;
-      
+      if (isFullscreen) {
+        if (event.key === 'Escape') {
+          setIsFullscreen(false);
+        }
+        return;
+      }
       switch (event.key) {
         case 'ArrowLeft':
           prevSlide();
@@ -88,7 +94,7 @@ const BirthdaySlideshow = () => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [nextSlide, prevSlide, isPlaying, showWelcome]);
+  }, [nextSlide, prevSlide, isPlaying, showWelcome, isFullscreen]);
 
   if (showWelcome) {
     return (
@@ -105,7 +111,7 @@ const BirthdaySlideshow = () => {
             <div className="absolute -bottom-4 -left-8 text-primary animate-sparkle delay-1000">
               <Sparkles className="w-5 h-5 fill-current" />
             </div>
-            
+
             {/* Main content */}
             <div className="space-y-8">
               <div className="space-y-4">
@@ -116,14 +122,12 @@ const BirthdaySlideshow = () => {
                   Sonia
                 </h2>
               </div>
-
               <div className="space-y-6 animate-celebration-entrance delay-500">
                 <p className="text-xl font-quicksand text-foreground/80 leading-relaxed">
                   Una celebración de momentos preciosos y recuerdos invaluables.
                   <br />
                   Disfruta de esta presentación especial creada con mucho amor.
                 </p>
-                
                 <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                   <Button 
                     onClick={() => setShowWelcome(false)}
@@ -133,7 +137,6 @@ const BirthdaySlideshow = () => {
                     <Play className="w-5 h-5 mr-2" />
                     Comenzar Presentación
                   </Button>
-                  
                   <p className="text-sm font-quicksand text-muted-foreground">
                     Usa las flechas ← → o la barra espaciadora para navegar
                   </p>
@@ -162,7 +165,6 @@ const BirthdaySlideshow = () => {
               </p>
             </div>
           </div>
-          
           <div className="flex items-center space-x-3">
             <Button
               variant="outline"
@@ -173,7 +175,6 @@ const BirthdaySlideshow = () => {
               {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
               {isPlaying ? 'Pausar' : 'Reproducir'}
             </Button>
-            
             <Button
               variant="outline"
               size="sm"
@@ -198,7 +199,6 @@ const BirthdaySlideshow = () => {
           >
             <ChevronLeft className="w-6 h-6" />
           </Button>
-          
           <Button
             variant="outline"
             size="icon"
@@ -289,12 +289,11 @@ const BirthdaySlideshow = () => {
                       transformOrigin: 'center'
                     }}
                     onError={() => handleImageError(currentMedia.id)}
-                    onClick={() => setShowImageControls(!showImageControls)}
+                    onClick={() => setIsFullscreen(true)}
                   />
                 </div>
               )}
             </div>
-            
             {/* Caption overlay */}
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-6">
               <h3 className="text-white text-lg font-semibold font-dancing mb-1">
@@ -308,6 +307,29 @@ const BirthdaySlideshow = () => {
         </div>
       </div>
 
+      {/* Pantalla completa */}
+      {isFullscreen && (
+        <div
+          className="fixed inset-0 z-[100] bg-black bg-opacity-95 flex items-center justify-center animate-fade-in"
+          onClick={() => setIsFullscreen(false)}
+          style={{ cursor: 'zoom-out' }}
+        >
+          <img
+            src={currentMedia.src}
+            alt={currentMedia.caption}
+            className="max-w-full max-h-full object-contain"
+            onClick={e => e.stopPropagation()}
+          />
+          <button
+            className="absolute top-8 right-8 text-white bg-black/60 rounded-full p-2 hover:bg-black/80 transition"
+            onClick={() => setIsFullscreen(false)}
+            aria-label="Cerrar pantalla completa"
+          >
+            <X className="w-8 h-8" />
+          </button>
+        </div>
+      )}
+
       {/* Progress bar */}
       <div className="bg-white/80 backdrop-blur-sm border-t border-primary/20 px-6 py-4 rgb-pulse">
         <div className="max-w-6xl mx-auto">
@@ -320,7 +342,7 @@ const BirthdaySlideshow = () => {
             </span>
           </div>
           <div className="w-full bg-secondary rounded-full h-2">
-            <div 
+            <div
               className="bg-gradient-to-r from-primary to-celebration h-2 rounded-full transition-all duration-500 golden-shadow"
               style={{ width: `${((currentSlide + 1) / media.length) * 100}%` }}
             />
