@@ -92,8 +92,8 @@ const BirthdaySlideshow = () => {
 
   if (showWelcome) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-warm-pink to-secondary flex items-center justify-center p-6">
-        <Card className="max-w-2xl mx-auto text-center p-12 birthday-shadow animate-celebration-entrance">
+      <div className="min-h-screen bg-gradient-to-br from-background via-warm-pink to-secondary flex items-center justify-center p-6 rgb-lights">
+        <Card className="max-w-2xl mx-auto text-center p-12 birthday-shadow animate-celebration-entrance rgb-glow">
           <div className="relative">
             {/* Floating hearts decoration */}
             <div className="absolute -top-6 -left-6 text-celebration animate-float">
@@ -109,16 +109,16 @@ const BirthdaySlideshow = () => {
             {/* Main content */}
             <div className="space-y-8">
               <div className="space-y-4">
-                <h1 className="text-6xl md:text-7xl font-bold celebration-text animate-slide-in-left">
+                <h1 className="text-6xl md:text-7xl font-bold font-dancing celebration-text animate-slide-in-left">
                   ¡Feliz Cumpleaños!
                 </h1>
-                <h2 className="text-4xl md:text-5xl font-semibold golden-text animate-slide-in-right delay-300">
+                <h2 className="text-4xl md:text-5xl font-semibold font-dancing golden-text animate-slide-in-right delay-300">
                   Sonia
                 </h2>
               </div>
 
               <div className="space-y-6 animate-celebration-entrance delay-500">
-                <p className="text-xl text-foreground/80 leading-relaxed">
+                <p className="text-xl font-quicksand text-foreground/80 leading-relaxed">
                   Una celebración de momentos preciosos y recuerdos invaluables.
                   <br />
                   Disfruta de esta presentación especial creada con mucho amor.
@@ -128,13 +128,13 @@ const BirthdaySlideshow = () => {
                   <Button 
                     onClick={() => setShowWelcome(false)}
                     size="lg"
-                    className="bg-primary hover:bg-celebration text-primary-foreground px-8 py-4 text-lg font-semibold birthday-shadow hover:scale-105 transition-all duration-300"
+                    className="bg-primary hover:bg-celebration text-primary-foreground px-8 py-4 text-lg font-semibold font-quicksand birthday-shadow hover:scale-105 transition-all duration-300 rgb-border"
                   >
                     <Play className="w-5 h-5 mr-2" />
                     Comenzar Presentación
                   </Button>
                   
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm font-quicksand text-muted-foreground">
                     Usa las flechas ← → o la barra espaciadora para navegar
                   </p>
                 </div>
@@ -149,15 +149,15 @@ const BirthdaySlideshow = () => {
   const currentMedia = media[currentSlide];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-warm-pink/30 to-secondary/50">
+    <div className="min-h-screen bg-gradient-to-br from-background via-warm-pink/30 to-secondary/50 rgb-lights">
       {/* Header */}
-      <div className="bg-white/80 backdrop-blur-sm border-b border-primary/20 px-6 py-4">
+      <div className="bg-white/80 backdrop-blur-sm border-b border-primary/20 px-6 py-4 rgb-pulse">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <Heart className="w-8 h-8 text-celebration fill-current animate-float" />
             <div>
-              <h1 className="text-2xl font-bold celebration-text">Cumpleaños de Sonia</h1>
-              <p className="text-sm text-muted-foreground">
+              <h1 className="text-2xl font-bold font-dancing celebration-text">Cumpleaños de Sonia</h1>
+              <p className="text-sm font-quicksand text-muted-foreground">
                 {currentSlide + 1} de {media.length} • {currentMedia.type === 'video' ? 'Video' : 'Fotografía'}
               </p>
             </div>
@@ -168,7 +168,7 @@ const BirthdaySlideshow = () => {
               variant="outline"
               size="sm"
               onClick={() => setIsPlaying(!isPlaying)}
-              className="border-primary/30 hover:bg-primary/10"
+              className="border-primary/30 hover:bg-primary/10 font-quicksand rgb-border"
             >
               {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
               {isPlaying ? 'Pausar' : 'Reproducir'}
@@ -178,7 +178,7 @@ const BirthdaySlideshow = () => {
               variant="outline"
               size="sm"
               onClick={() => setShowWelcome(true)}
-              className="border-primary/30 hover:bg-primary/10"
+              className="border-primary/30 hover:bg-primary/10 font-quicksand rgb-border"
             >
               Inicio
             </Button>
@@ -261,20 +261,20 @@ const BirthdaySlideshow = () => {
           </div>
 
           {/* Media container */}
-          <Card className="relative overflow-hidden card-shadow animate-gentle-glow group">
+          <Card className="relative overflow-hidden card-shadow animate-gentle-glow group rgb-glow rgb-border">
             <div className="aspect-[16/10] bg-gradient-to-br from-muted to-secondary/30 flex items-center justify-center overflow-hidden">
               {imageLoadError.has(currentMedia.id) ? (
                 <div className="text-center p-8">
                   <div className="w-24 h-24 mx-auto mb-4 bg-primary/20 rounded-full flex items-center justify-center">
                     <Heart className="w-12 h-12 text-primary" />
                   </div>
-                  <h3 className="text-xl font-semibold text-foreground mb-2">
+                  <h3 className="text-xl font-semibold font-dancing text-foreground mb-2">
                     {currentMedia.caption}
                   </h3>
-                  <p className="text-muted-foreground">
+                  <p className="font-quicksand text-muted-foreground">
                     Imagen: {currentMedia.src}
                   </p>
-                  <p className="text-sm text-muted-foreground mt-2">
+                  <p className="text-sm font-quicksand text-muted-foreground mt-2">
                     (Coloca la imagen en la carpeta public del proyecto)
                   </p>
                 </div>
@@ -297,10 +297,10 @@ const BirthdaySlideshow = () => {
             
             {/* Caption overlay */}
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-6">
-              <h3 className="text-white text-lg font-semibold mb-1">
+              <h3 className="text-white text-lg font-semibold font-dancing mb-1">
                 {currentMedia.caption}
               </h3>
-              <p className="text-white/80 text-sm">
+              <p className="text-white/80 text-sm font-quicksand">
                 {currentMedia.type === 'video' ? 'Video especial' : `Fotografía ${currentMedia.id}`}
               </p>
             </div>
@@ -309,13 +309,13 @@ const BirthdaySlideshow = () => {
       </div>
 
       {/* Progress bar */}
-      <div className="bg-white/80 backdrop-blur-sm border-t border-primary/20 px-6 py-4">
+      <div className="bg-white/80 backdrop-blur-sm border-t border-primary/20 px-6 py-4 rgb-pulse">
         <div className="max-w-6xl mx-auto">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-foreground">
+            <span className="text-sm font-medium font-quicksand text-foreground">
               Progreso de la presentación
             </span>
-            <span className="text-sm text-muted-foreground">
+            <span className="text-sm font-quicksand text-muted-foreground">
               {Math.round(((currentSlide + 1) / media.length) * 100)}%
             </span>
           </div>
